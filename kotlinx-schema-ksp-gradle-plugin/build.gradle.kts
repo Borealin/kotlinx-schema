@@ -44,6 +44,7 @@ dependencies {
     testRuntimeOnly(project(":kotlinx-schema-annotations"))
     testImplementation(gradleTestKit())
     testImplementation(libs.kotlin.test)
+    testImplementation(libs.junit.jupiter.params)
     testImplementation(libs.mockk)
     testImplementation(libs.kotest.assertions.core)
 
