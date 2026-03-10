@@ -7,6 +7,9 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
 
+/**
+ * Test for [#194](https://github.com/Kotlin/kotlinx-schema/issues/194)
+ */
 class NestedClassGenerationTest {
     val generator =
         SerializationClassJsonSchemaGenerator()

@@ -20,9 +20,11 @@ class JsonSchemaGeneratorTest {
         val nullableProperty: String? = null,
         val listProperty: List<String> = emptyList(),
         val mapProperty: Map<String, Int> = emptyMap(),
+        @property:Description("A custom nested property")
         val nestedProperty: NestedProperty = NestedProperty("foo", 1),
         val nestedListProperty: List<NestedProperty> = emptyList(),
         val nestedMapProperty: Map<String, NestedProperty> = emptyMap(),
+        @property:Description("A custom polymorphic property")
         val polymorphicProperty: TestClosedPolymorphism = TestClosedPolymorphism.SubClass1("id1", "property1"),
         val enumProperty: TestEnum = TestEnum.One,
         val objectProperty: TestObject = TestObject,
@@ -35,16 +37,15 @@ class JsonSchemaGeneratorTest {
         val bar: Int,
     )
 
+    @Suppress("unused")
     sealed class TestClosedPolymorphism {
         abstract val id: String
 
-        @Suppress("unused")
         data class SubClass1(
             override val id: String,
             val property1: String,
         ) : TestClosedPolymorphism()
 
-        @Suppress("unused")
         data class SubClass2(
             override val id: String,
             val property2: Int,
@@ -62,24 +63,16 @@ class JsonSchemaGeneratorTest {
     private val generator =
         ReflectionClassJsonSchemaGenerator(
             json = Json { prettyPrint = true },
-            // Default, but with includePolymorphicDiscriminator enabled
-            config =
-                JsonSchemaConfig(
-                    respectDefaultPresence = true,
-                    requireNullableFields = true,
-                    useUnionTypes = true,
-                    useNullableField = false,
-                    includePolymorphicDiscriminator = true,
-                    includeOpenAPIPolymorphicDiscriminator = false,
-                ),
+            config = JsonSchemaConfig.Default,
         )
 
     @Test
     fun `Should generate JsonSchema for complex class`() {
+        println("Generating schema for TestClass with generator config: ${JsonSchemaConfig.Default}")
+
         val schema = generator.generateSchemaString(TestClass::class)
 
         schema shouldEqualJson
-            // language=JSON
             $$"""
             {
               "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -130,7 +123,8 @@ class JsonSchemaGeneratorTest {
                   }
                 },
                 "nestedProperty": {
-                  "$ref": "#/$defs/kotlinx.schema.generator.json.JsonSchemaGeneratorTest.NestedProperty"
+                  "$ref": "#/$defs/kotlinx.schema.generator.json.JsonSchemaGeneratorTest.NestedProperty",
+                  "description": "A custom nested property"
                 },
                 "nestedListProperty": {
                   "type": "array",
@@ -147,7 +141,8 @@ class JsonSchemaGeneratorTest {
                   }
                 },
                 "polymorphicProperty": {
-                  "$ref": "#/$defs/kotlinx.schema.generator.json.JsonSchemaGeneratorTest.TestClosedPolymorphism"
+                  "$ref": "#/$defs/kotlinx.schema.generator.json.JsonSchemaGeneratorTest.TestClosedPolymorphism",
+                  "description": "A custom polymorphic property"
                 },
                 "enumProperty": {
                   "$ref": "#/$defs/kotlinx.schema.generator.json.JsonSchemaGeneratorTest.TestEnum"
@@ -163,8 +158,7 @@ class JsonSchemaGeneratorTest {
                 "longProperty",
                 "doubleProperty",
                 "floatProperty",
-                "booleanNullableProperty",
-                "nullableProperty"
+                "booleanNullableProperty"
               ],
               "$defs": {
                 "kotlinx.schema.generator.json.JsonSchemaGeneratorTest.NestedProperty": {

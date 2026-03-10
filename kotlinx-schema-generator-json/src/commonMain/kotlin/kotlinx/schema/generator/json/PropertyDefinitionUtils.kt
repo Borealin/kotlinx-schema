@@ -1,19 +1,26 @@
+@file:JvmName("PropertyDefinitionUtils")
+
 package kotlinx.schema.generator.json
 
+import kotlinx.schema.json.AllOfPropertyDefinition
 import kotlinx.schema.json.AnyOfPropertyDefinition
 import kotlinx.schema.json.ArrayPropertyDefinition
 import kotlinx.schema.json.BooleanPropertyDefinition
+import kotlinx.schema.json.BooleanSchemaDefinition
 import kotlinx.schema.json.GenericPropertyDefinition
+import kotlinx.schema.json.JsonSchema
 import kotlinx.schema.json.NumericPropertyDefinition
 import kotlinx.schema.json.ObjectPropertyDefinition
 import kotlinx.schema.json.OneOfPropertyDefinition
 import kotlinx.schema.json.PropertyDefinition
+import kotlinx.schema.json.ReferencePropertyDefinition
 import kotlinx.schema.json.StringPropertyDefinition
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
+import kotlin.jvm.JvmName
 
 /**
  * Sets the const value on a property definition.
@@ -53,7 +60,7 @@ internal fun setDefaultValue(
 }
 
 /**
- * Sets the description on a property definition.
+ * Sets the description on a property definition, if [PropertyDefinition] supports it.
  */
 internal fun setDescription(
     propertyDef: PropertyDefinition,
@@ -68,7 +75,10 @@ internal fun setDescription(
         is AnyOfPropertyDefinition -> propertyDef.copy(description = description)
         is OneOfPropertyDefinition -> propertyDef.copy(description = description)
         is GenericPropertyDefinition -> propertyDef.copy(description = description)
-        else -> propertyDef
+        is AllOfPropertyDefinition -> propertyDef.copy(description = description)
+        is ReferencePropertyDefinition -> propertyDef.copy(description = description)
+        is JsonSchema -> propertyDef.copy(description = description)
+        is BooleanSchemaDefinition -> propertyDef // no description field
     }
 
 /**
