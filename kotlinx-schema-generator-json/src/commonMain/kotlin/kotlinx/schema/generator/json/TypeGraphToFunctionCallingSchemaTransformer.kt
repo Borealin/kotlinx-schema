@@ -257,10 +257,8 @@ public class TypeGraphToFunctionCallingSchemaTransformer
         private fun convertPrimitive(
             node: PrimitiveNode,
             nullable: Boolean,
-        ): PropertyDefinition {
-            val minimum = node.minimumOrNull()
-
-            return when (node.kind) {
+        ): PropertyDefinition =
+            when (node.kind) {
                 PrimitiveKind.STRING -> {
                     StringPropertyDefinition(
                         type = if (nullable) STRING_OR_NULL_TYPE else STRING_TYPE,
@@ -284,7 +282,7 @@ public class TypeGraphToFunctionCallingSchemaTransformer
                         type = if (nullable) INTEGER_OR_NULL_TYPE else INTEGER_TYPE,
                         description = node.description,
                         nullable = null,
-                        minimum = minimum,
+                        minimum = if (node.unsigned) 0.0 else null,
                     )
                 }
 
@@ -296,7 +294,6 @@ public class TypeGraphToFunctionCallingSchemaTransformer
                     )
                 }
             }
-        }
 
         private fun convertObject(
             node: ObjectNode,

@@ -317,3 +317,4 @@ public final class kotlinx/schema/generator/reflect/ReflectionFunctionIntrospect
 public final class kotlinx/schema/generator/reflect/ReflectionUtilsKt {
 	public static final fun extractNameOverride (Ljava/util/List;)Ljava/lang/String;
 }
+

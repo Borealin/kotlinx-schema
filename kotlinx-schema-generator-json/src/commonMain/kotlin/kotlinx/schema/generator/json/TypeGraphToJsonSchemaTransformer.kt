@@ -198,6 +198,7 @@ public class TypeGraphToJsonSchemaTransformer
                 id = formatSchemaId(rootName),
                 type = rootDefinition.type,
                 description = rootDefinition.description,
+                minimum = rootDefinition.minimum,
                 properties = emptyMap(),
                 required = emptyList(),
                 additionalProperties = null,
@@ -390,10 +391,8 @@ public class TypeGraphToJsonSchemaTransformer
         private fun convertPrimitive(
             node: PrimitiveNode,
             nullable: Boolean,
-        ): PropertyDefinition {
-            val minimum = node.minimumOrNull()
-
-            return when (node.kind) {
+        ): PropertyDefinition =
+            when (node.kind) {
                 PrimitiveKind.STRING -> {
                     StringPropertyDefinition(
                         type = if (nullable && config.useUnionTypes) STRING_OR_NULL_TYPE else STRING_TYPE,
@@ -417,7 +416,7 @@ public class TypeGraphToJsonSchemaTransformer
                         type = if (nullable && config.useUnionTypes) INTEGER_OR_NULL_TYPE else INTEGER_TYPE,
                         description = node.description,
                         nullable = getNullableFlag(nullable),
-                        minimum = minimum,
+                        minimum = if (node.unsigned) 0.0 else null,
                     )
                 }
 
@@ -429,7 +428,6 @@ public class TypeGraphToJsonSchemaTransformer
                     )
                 }
             }
-        }
 
         /**
          * Converts object nodes (classes, data classes) to object property definitions.

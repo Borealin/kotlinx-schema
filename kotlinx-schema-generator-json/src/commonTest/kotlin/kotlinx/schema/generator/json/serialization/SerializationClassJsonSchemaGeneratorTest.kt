@@ -3,6 +3,7 @@ package kotlinx.schema.generator.json.serialization
 import io.kotest.assertions.json.shouldEqualJson
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.serializer
 import kotlin.test.Test
 
 class SerializationClassJsonSchemaGeneratorTest {
@@ -374,6 +375,22 @@ class SerializationClassJsonSchemaGeneratorTest {
                 "distance"
               ],
               "additionalProperties": false
+            }
+            """.trimIndent()
+    }
+
+    @Test
+    fun `Should keep minimum for root-level unsigned primitive`() {
+        val schema = generator.generateSchemaString(UInt.serializer().descriptor)
+
+        schema shouldEqualJson
+            // language=JSON
+            $$"""
+            {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "$id": "kotlin.UInt",
+              "type": "integer",
+              "minimum": 0
             }
             """.trimIndent()
     }

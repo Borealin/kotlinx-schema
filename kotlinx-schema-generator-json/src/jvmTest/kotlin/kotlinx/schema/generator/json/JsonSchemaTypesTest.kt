@@ -140,6 +140,37 @@ class JsonSchemaTypesTest {
     }
 
     @Test
+    fun `Should keep default values for unsigned properties`() {
+        val schema = generator.generateSchemaString(WithUnsignedDefaults::class)
+
+        schema shouldEqualJson
+            // language=JSON
+            $$"""
+            {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "$id": "kotlinx.schema.generator.json.WithUnsignedDefaults",
+              "description": "Class with unsigned defaults",
+              "type": "object",
+              "properties": {
+                "port": {
+                  "type": "integer",
+                  "description": "Port with default",
+                  "minimum": 0,
+                  "default": 8080
+                },
+                "capacity": {
+                  "type": "integer",
+                  "description": "Capacity with default",
+                  "minimum": 0,
+                  "default": 18446744073709551615
+                }
+              },
+              "additionalProperties": false
+            }
+            """
+    }
+
+    @Test
     fun `Should handle enum types`() {
         val schema = generator.generateSchemaString(WithEnum::class)
 

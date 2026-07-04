@@ -82,6 +82,14 @@ data class WithUnsignedTypes(
     val nullableUInt: UInt? = null,
 )
 
+@Description("Class with unsigned defaults")
+data class WithUnsignedDefaults(
+    @property:Description("Port with default")
+    val port: UInt = 8080u,
+    @property:Description("Capacity with default")
+    val capacity: ULong = ULong.MAX_VALUE,
+)
+
 // Class with collections
 @Description("Class with collections")
 data class WithCollections(
